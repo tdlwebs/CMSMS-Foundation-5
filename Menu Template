@@ -1,0 +1,49 @@
+{* Menu Template for default Foundation 5 Sass Installation *} 
+
+{assign var='number_of_levels' value=10000}
+{if isset($menuparams.number_of_levels)}
+  {assign var='number_of_levels' value=$menuparams.number_of_levels}
+{/if}
+
+{if $count > 0}
+<ul class="right">
+{foreach from=$nodelist item=node}
+{if $node->depth > $node->prevdepth}
+{repeat string="<ul class='dropdown'>" times=$node->depth-$node->prevdepth}
+{elseif $node->depth < $node->prevdepth}
+{repeat string="</li></ul>" times=$node->prevdepth-$node->depth}
+</li>
+{elseif $node->index > 0}</li>
+{/if}
+
+{if $node->parent == true or $node->current == true}
+  {assign var='classes' value='active'}
+  {if $node->parent == true}
+    {assign var='classes' value='active has-dropdown'}
+  {/if}
+  {if $node->children_exist == true and $node->depth < $number_of_levels}
+    {assign var='classes' value=$classes|cat:' has-dropdown'}
+  {/if}
+  <li class="{$classes}"><a class="{$classes}" href="{$node->url}">{$node->menutext}</a>
+
+{elseif $node->children_exist == true and $node->depth < $number_of_levels and $node->type != 'sectionheader' and $node->type != 'separator'}
+<li class="has-dropdown"><a class="parent" href="{$node->url}">{$node->menutext}</a>
+
+{elseif $node->current == true}
+<li class="currentpage">{$node->menutext}
+
+{elseif $node->type == 'sectionheader'}
+<li class="sectionheader">{$node->menutext}
+
+{elseif $node->type == 'separator'}
+<li class="separator" style="list-style-type: none;"> <hr />
+
+{else}
+<li><a href="{$node->url}">{$node->menutext}</a>
+
+{/if}
+
+{/foreach}
+{repeat string="</li></ul>" times=$node->depth-1}</li>
+</ul>
+{/if}
